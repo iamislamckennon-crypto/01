@@ -7,15 +7,21 @@
     "start": "node server/index.js",
     "client": "npm start --prefix client",
     "server": "nodemon server/index.js",
-    "dev": "concurrently 'npm run server' 'npm run client'"
+    "dev": "concurrently 'npm run server' 'npm run client'",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "express": "^4.17.1",
+    "express-rate-limit": "^8.1.0",
     "mongoose": "^5.10.9"
   },
   "devDependencies": {
     "cheerio": "^1.1.2",
     "concurrently": "^5.3.0",
-    "nodemon": "^2.0.4"
+    "jest": "^30.2.0",
+    "nodemon": "^2.0.4",
+    "supertest": "^7.1.4"
   }
 }
