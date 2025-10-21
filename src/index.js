@@ -325,9 +325,9 @@ export default {
 
     } catch (error) {
       console.error('Worker error:', error);
+      // Don't expose error details to client in production
       return new Response(JSON.stringify({ 
-        error: 'Internal server error',
-        message: sanitizeError(error)
+        error: 'Internal server error'
       }), {
         status: 500,
         headers: corsHeaders({ 'Content-Type': 'application/json' })
