@@ -61,10 +61,25 @@ function logEvent(event) {
   eventItem.className = 'event-item';
   
   const time = new Date().toLocaleTimeString();
-  eventItem.innerHTML = `
-    <span class="event-time">${time}</span>
-    <span class="event-type">${event.type}</span>: ${JSON.stringify(event.payload || {})}
-  `;
+  
+  // Create text nodes to prevent XSS
+  const timeSpan = document.createElement('span');
+  timeSpan.className = 'event-time';
+  timeSpan.textContent = time;
+  
+  const typeSpan = document.createElement('span');
+  typeSpan.className = 'event-type';
+  typeSpan.textContent = event.type;
+  
+  const separator = document.createTextNode(': ');
+  
+  const payloadSpan = document.createElement('span');
+  payloadSpan.textContent = JSON.stringify(event.payload || {});
+  
+  eventItem.appendChild(timeSpan);
+  eventItem.appendChild(typeSpan);
+  eventItem.appendChild(separator);
+  eventItem.appendChild(payloadSpan);
   
   eventsLog.insertBefore(eventItem, eventsLog.firstChild);
   
