@@ -137,7 +137,8 @@ async function fetchMetadata(url) {
  * Classify a source based on its metadata
  * 
  * Uses heuristics to determine source type from URL patterns, 
- * content structure, and metadata.
+ * content structure, and metadata. Uses proper URL parsing to
+ * extract hostname for security.
  * 
  * TODO: Implement ML-based classification for ambiguous cases
  * TODO: Add confidence scores to classifications
@@ -150,44 +151,68 @@ function classifySource(metadata) {
     return 'Unknown';
   }
   
-  const url = metadata.url.toLowerCase();
+  let hostname;
+  let pathname;
   
-  // Academic sources
-  if (url.includes('arxiv.org') || 
-      url.includes('ieee.org') || 
-      url.includes('acm.org') ||
-      url.includes('.edu/') ||
-      url.includes('scholar.google')) {
+  try {
+    // Parse URL properly to extract hostname (prevents URL bypassing)
+    const urlObj = new URL(metadata.url);
+    hostname = urlObj.hostname.toLowerCase();
+    pathname = urlObj.pathname.toLowerCase();
+  } catch (error) {
+    // Invalid URL
+    return 'Unknown';
+  }
+  
+  // Academic sources - check exact hostname matches
+  if (hostname === 'arxiv.org' || 
+      hostname.endsWith('.arxiv.org') ||
+      hostname === 'ieeexplore.ieee.org' ||
+      hostname.endsWith('.ieee.org') ||
+      hostname === 'dl.acm.org' ||
+      hostname.endsWith('.acm.org') ||
+      hostname.endsWith('.edu') ||
+      hostname === 'scholar.google.com') {
     return 'Academic';
   }
   
-  // Open-Source repositories
-  if (url.includes('github.com') || 
-      url.includes('gitlab.com') ||
-      url.includes('bitbucket.org')) {
+  // Open-Source repositories - check exact hostname matches
+  if (hostname === 'github.com' || 
+      hostname.endsWith('.github.com') ||
+      hostname === 'gitlab.com' ||
+      hostname.endsWith('.gitlab.com') ||
+      hostname === 'bitbucket.org' ||
+      hostname.endsWith('.bitbucket.org')) {
     return 'Open-Source';
   }
   
-  // Standards and specifications
-  if (url.includes('ietf.org') || 
-      url.includes('w3.org') ||
-      url.includes('rfc-editor.org') ||
-      url.includes('nist.gov')) {
+  // Standards and specifications - check exact hostname matches
+  if (hostname === 'ietf.org' || 
+      hostname.endsWith('.ietf.org') ||
+      hostname === 'w3.org' ||
+      hostname.endsWith('.w3.org') ||
+      hostname === 'rfc-editor.org' ||
+      hostname.endsWith('.rfc-editor.org') ||
+      hostname === 'nist.gov' ||
+      hostname.endsWith('.nist.gov')) {
     return 'Standard';
   }
   
-  // Forum discussions
-  if (url.includes('reddit.com') || 
-      url.includes('news.ycombinator.com') ||
-      url.includes('stackoverflow.com') ||
-      url.includes('discord.com')) {
+  // Forum discussions - check exact hostname matches
+  if (hostname === 'reddit.com' || 
+      hostname.endsWith('.reddit.com') ||
+      hostname === 'news.ycombinator.com' ||
+      hostname === 'stackoverflow.com' ||
+      hostname.endsWith('.stackoverflow.com') ||
+      hostname === 'discord.com' ||
+      hostname.endsWith('.discord.com')) {
     return 'Forum';
   }
   
-  // Product documentation
-  if (url.includes('/docs/') || 
-      url.includes('/documentation/') ||
-      url.includes('whitepaper')) {
+  // Product documentation - check path patterns
+  if (pathname.includes('/docs/') || 
+      pathname.includes('/documentation/') ||
+      pathname.includes('whitepaper')) {
     return 'Product';
   }
   
