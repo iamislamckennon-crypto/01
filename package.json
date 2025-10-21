@@ -1,1 +1,39 @@
-{\n  "name": "dice-roll-gaming-platform",\n  "version": "1.0.0",\n  "description": "A competitive dice roll gaming platform",\n  "main": "server/index.js",\n  "scripts": {\n    "start": "node server/index.js",\n    "client": "npm start --prefix client",\n    "server": "nodemon server/index.js",\n    "dev": "concurrently 'npm run server' 'npm run client'"\n  },\n  "dependencies": {\n    "express": "^4.17.1",\n    "mongoose": "^5.10.9"\n  },\n  "devDependencies": {\n    "nodemon": "^2.0.4",\n    "concurrently": "^5.3.0"\n  }\n}
+{
+  "name": "dice-platform",
+  "version": "1.0.0",
+  "description": "Enterprise-grade competitive dice rolling platform with provable fairness",
+  "type": "module",
+  "main": "cloudflare/src/index.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "deploy:pages": "wrangler pages deploy cloudflare/public"
+  },
+  "keywords": [
+    "dice",
+    "gaming",
+    "cloudflare",
+    "workers",
+    "durable-objects",
+    "pwa",
+    "fairness",
+    "cryptography"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "wrangler": "^3.78.0",
+    "vitest": "^1.0.0",
+    "@cloudflare/workers-types": "^4.20231218.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,24 @@
+name = "dice-platform"
+main = "cloudflare/src/index.js"
+compatibility_date = "2024-01-01"
+
+# Durable Objects binding
+[[durable_objects.bindings]]
+name = "GAMEROOM"
+class_name = "GameRoomDurable"
+script_name = "dice-platform"
+
+# Environment variables (configure via dashboard or wrangler secret)
+[vars]
+ORIGIN_ALLOWED = "http://localhost:8787"
+MAX_ROLLS_PER_MINUTE = "60"
+MIN_FAIRNESS_SAMPLE_SIZE = "30"
+FAIRNESS_ALPHA = "0.05"
+SUSPENSION_THRESHOLD = "3"
+
+# For production, set these as secrets:
+# wrangler secret put TURNSTILE_SECRET
+
+[[migrations]]
+tag = "v1"
+new_classes = ["GameRoomDurable"]
