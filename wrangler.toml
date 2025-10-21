@@ -1,0 +1,30 @@
+name = "dice-roll-platform"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Durable Objects
+[[durable_objects.bindings]]
+name = "GAME_ROOM_DO"
+class_name = "GameRoomDO"
+script_name = "dice-roll-platform"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["GameRoomDO"]
+
+# Environment variables
+[vars]
+ORIGIN_ALLOWED = "http://localhost:8787,https://your-domain.com"
+PRE_COMMIT_WINDOW = "60000"  # 60 seconds in milliseconds
+REVEAL_WINDOW = "30000"      # 30 seconds
+DECLARE_WINDOW = "30000"     # 30 seconds
+MIN_SAMPLE = "10"            # Minimum rolls before fairness analysis
+SUSPEND_THRESHOLD = "5"      # Violations before suspension
+
+# Secrets (set via wrangler secret put)
+# TURNSTILE_SECRET = "your-turnstile-secret-key"
+
+# Static assets
+[site]
+bucket = "./public"

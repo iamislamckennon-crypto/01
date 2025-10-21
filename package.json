@@ -1,21 +1,17 @@
 {
   "name": "dice-roll-gaming-platform",
   "version": "1.0.0",
-  "description": "A competitive dice roll gaming platform",
-  "main": "server/index.js",
+  "description": "Remote physical dice rolling platform with commitment-reveal protocol",
+  "main": "src/index.js",
+  "type": "module",
   "scripts": {
-    "start": "node server/index.js",
-    "client": "npm start --prefix client",
-    "server": "nodemon server/index.js",
-    "dev": "concurrently 'npm run server' 'npm run client'"
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node --test tests/*.test.js",
+    "verify-chain": "node scripts/verify-chain.js"
   },
-  "dependencies": {
-    "express": "^4.17.1",
-    "mongoose": "^5.10.9"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "cheerio": "^1.1.2",
-    "concurrently": "^5.3.0",
-    "nodemon": "^2.0.4"
+    "wrangler": "^3.80.0"
   }
 }
