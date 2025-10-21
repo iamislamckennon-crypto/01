@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Remote physical dice rolling platform with commitment-reveal protocol">
+  <meta name="theme-color" content="#1a1a2e">
+  <title>Dice Roll Platform</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>🎲 Remote Dice Rolling Platform</h1>
+      <div id="connection-status" class="status-badge">Disconnected</div>
+    </header>
+
+    <main>
+      <!-- Registration Section -->
+      <section id="registration-section" class="section">
+        <h2>Join Game</h2>
+        <form id="registration-form">
+          <div class="form-group">
+            <label for="player-id">Player ID:</label>
+            <input type="text" id="player-id" placeholder="Enter your player ID" 
+                   pattern="[a-zA-Z0-9_-]{3,50}" required>
+          </div>
+          <div id="turnstile-container"></div>
+          <button type="submit" class="btn-primary">Register</button>
+          <button type="button" id="create-room-btn" class="btn-secondary">Create New Room</button>
+          <button type="button" id="join-room-btn" class="btn-secondary">Join Existing Room</button>
+        </form>
+        <div id="room-info" style="display: none;">
+          <p>Room ID: <span id="room-id"></span> <button id="copy-room-id" class="btn-small">Copy</button></p>
+        </div>
+      </section>
+
+      <!-- Game Room Section -->
+      <section id="game-section" class="section" style="display: none;">
+        <!-- Player Status -->
+        <div id="players-status" class="players-grid">
+          <div class="player-card" id="player-1-card">
+            <h3>Player 1</h3>
+            <p class="player-id"></p>
+            <p class="player-tier">Tier: <span></span></p>
+            <p class="player-stats">Rolls: <span class="rolls">0</span> | Violations: <span class="violations">0</span></p>
+            <p class="player-perspective">View: <span></span></p>
+          </div>
+          <div class="player-card" id="player-2-card">
+            <h3>Player 2</h3>
+            <p class="player-id"></p>
+            <p class="player-tier">Tier: <span></span></p>
+            <p class="player-stats">Rolls: <span class="rolls">0</span> | Violations: <span class="violations">0</span></p>
+            <p class="player-perspective">View: <span></span></p>
+          </div>
+        </div>
+
+        <!-- Video Streams -->
+        <div id="video-container" class="video-grid">
+          <div class="video-wrapper">
+            <video id="local-video" autoplay muted playsinline></video>
+            <div class="video-label">Your Camera</div>
+          </div>
+          <div class="video-wrapper">
+            <video id="remote-video" autoplay playsinline></video>
+            <div class="video-label">Opponent Camera</div>
+          </div>
+        </div>
+
+        <!-- Perspective Toggle -->
+        <div id="perspective-controls" class="controls">
+          <label>Camera Perspective:</label>
+          <button id="perspective-fp" class="btn-toggle active">First Person</button>
+          <button id="perspective-tp" class="btn-toggle">Third Person (Overhead)</button>
+        </div>
+
+        <!-- Pre-game Checklist -->
+        <div id="checklist-section" class="section">
+          <h3>Pre-Roll Checklist</h3>
+          <form id="checklist-form">
+            <label>
+              <input type="checkbox" name="flatSurface" required>
+              Flat, visible rolling surface
+            </label>
+            <label>
+              <input type="checkbox" name="standardDice" required>
+              Standard 6-sided dice
+            </label>
+            <label>
+              <input type="checkbox" name="adequateLighting" required>
+              Adequate lighting
+            </label>
+            <label>
+              <input type="checkbox" name="cameraFixed" required>
+              Camera fixed in position
+            </label>
+            <button type="submit" class="btn-primary">Confirm Checklist</button>
+          </form>
+          <p id="checklist-status"></p>
+        </div>
+
+        <!-- Turn Controls -->
+        <div id="turn-section" class="section">
+          <div id="turn-info">
+            <h3>Turn <span id="turn-number">1</span></h3>
+            <p>Current Player: <span id="current-player"></span></p>
+            <p>Status: <span id="turn-status">Waiting...</span></p>
+            <p id="timer-display" class="timer"></p>
+          </div>
+
+          <!-- Commitment Flow -->
+          <div id="commitment-flow">
+            <div class="commitment-step" id="step-pre-roll">
+              <h4>1. Capture Pre-Roll Frame</h4>
+              <canvas id="frame-canvas" width="64" height="64" style="display:none;"></canvas>
+              <button id="capture-pre-roll" class="btn-primary" disabled>Capture Pre-Roll Frame</button>
+              <p id="pre-roll-status"></p>
+            </div>
+
+            <div class="commitment-step" id="step-commit">
+              <h4>2. Make Commitment</h4>
+              <p>Salt (auto-generated): <code id="salt-display"></code></p>
+              <button id="commit-btn" class="btn-primary" disabled>Commit to Roll</button>
+              <p id="commit-status"></p>
+            </div>
+
+            <div class="commitment-step" id="step-reveal">
+              <h4>3. Reveal Salt</h4>
+              <button id="reveal-btn" class="btn-primary" disabled>Reveal Salt</button>
+              <p id="reveal-status"></p>
+            </div>
+
+            <div class="commitment-step" id="step-roll">
+              <h4>4. Roll Dice Physically</h4>
+              <p>Roll your physical dice now!</p>
+            </div>
+
+            <div class="commitment-step" id="step-declare">
+              <h4>5. Declare Result</h4>
+              <div class="dice-buttons">
+                <button class="dice-btn" data-value="1">1</button>
+                <button class="dice-btn" data-value="2">2</button>
+                <button class="dice-btn" data-value="3">3</button>
+                <button class="dice-btn" data-value="4">4</button>
+                <button class="dice-btn" data-value="5">5</button>
+                <button class="dice-btn" data-value="6">6</button>
+              </div>
+              <button id="capture-post-roll" class="btn-primary" disabled>Capture Post-Roll Frame</button>
+              <p id="declare-status"></p>
+            </div>
+
+            <div class="commitment-step" id="step-finalize">
+              <h4>6. Finalize Turn</h4>
+              <button id="finalize-btn" class="btn-primary" disabled>Finalize Turn</button>
+              <p id="finalize-status"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fairness Monitor -->
+        <div id="fairness-section" class="section">
+          <h3>Fairness Monitor</h3>
+          <div id="fairness-chart" class="chart">
+            <div class="bar" data-value="1"><span class="bar-label">1</span><div class="bar-fill"></div></div>
+            <div class="bar" data-value="2"><span class="bar-label">2</span><div class="bar-fill"></div></div>
+            <div class="bar" data-value="3"><span class="bar-label">3</span><div class="bar-fill"></div></div>
+            <div class="bar" data-value="4"><span class="bar-label">4</span><div class="bar-fill"></div></div>
+            <div class="bar" data-value="5"><span class="bar-label">5</span><div class="bar-fill"></div></div>
+            <div class="bar" data-value="6"><span class="bar-label">6</span><div class="bar-fill"></div></div>
+          </div>
+          <p>Deviation: <span id="fairness-deviation">0.00</span></p>
+          <p>Status: <span id="fairness-status" class="status-badge">Insufficient Data</span></p>
+        </div>
+
+        <!-- Hash Chain Display -->
+        <div id="hash-chain-section" class="section">
+          <h3>Hash Chain Tip</h3>
+          <p><code id="hash-chain-tip">genesis</code> <button id="copy-hash" class="btn-small">Copy</button></p>
+          <button id="view-events" class="btn-secondary">View Event Log</button>
+        </div>
+
+        <!-- Dispute -->
+        <div id="dispute-section">
+          <button id="dispute-btn" class="btn-danger">Raise Dispute</button>
+        </div>
+      </section>
+
+      <!-- Event Log Modal -->
+      <div id="event-log-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+          <span class="modal-close">&times;</span>
+          <h2>Event Log</h2>
+          <div id="event-log-list"></div>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <p>Physical Dice Rolling Platform v1.0 | <a href="#" id="install-app">Install App</a></p>
+    </footer>
+  </div>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
