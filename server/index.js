@@ -4,12 +4,25 @@
  */
 
 const express = require('express');
+const rateLimit = require('express-rate-limit');
 const config = require('./config');
 const { processEvidence } = require('./evidenceValidator');
 const HashChain = require('./hashChain');
 
 const app = express();
 app.use(express.json());
+
+// Rate limiting to prevent DoS attacks
+const apiLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 100, // Limit each IP to 100 requests per minute
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+// Apply rate limiting to all API routes
+app.use('/api/', apiLimiter);
 
 // In-memory storage (in production, use database)
 const gameRooms = new Map();

@@ -100,6 +100,12 @@ class HashChain {
       eventIndex: event.eventIndex
     });
     
+    // Safety check: limit data length to prevent DoS
+    const MAX_DATA_LENGTH = 10000; // 10KB max
+    if (data.length > MAX_DATA_LENGTH) {
+      throw new Error('Event data too large');
+    }
+    
     // Simple hash for demo
     let hash = 0;
     for (let i = 0; i < data.length; i++) {

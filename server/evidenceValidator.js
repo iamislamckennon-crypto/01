@@ -136,6 +136,12 @@ function computeEvidenceHash(evidence) {
     algorithmVersion: evidence.algorithmVersion
   });
   
+  // Safety check: limit data length to prevent DoS
+  const MAX_DATA_LENGTH = 10000; // 10KB max
+  if (data.length > MAX_DATA_LENGTH) {
+    throw new Error('Evidence data too large');
+  }
+  
   // Simple hash for demo (in production use crypto)
   let hash = 0;
   for (let i = 0; i < data.length; i++) {
