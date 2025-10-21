@@ -1,1 +1,22 @@
-{\n  "name": "dice-roll-gaming-platform",\n  "version": "1.0.0",\n  "description": "A competitive dice roll gaming platform",\n  "main": "server/index.js",\n  "scripts": {\n    "start": "node server/index.js",\n    "client": "npm start --prefix client",\n    "server": "nodemon server/index.js",\n    "dev": "concurrently 'npm run server' 'npm run client'"\n  },\n  "dependencies": {\n    "express": "^4.17.1",\n    "mongoose": "^5.10.9"\n  },\n  "devDependencies": {\n    "nodemon": "^2.0.4",\n    "concurrently": "^5.3.0"\n  }\n}
+{
+  "name": "dice-roll-gaming-platform",
+  "version": "1.0.0",
+  "description": "A competitive dice roll gaming platform",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "build": "bash build-client.sh",
+    "server": "nodemon server/index.js",
+    "dev": "npm run build && npm start"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.10.9",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "concurrently": "^5.3.0",
+    "nodemon": "^2.0.4"
+  }
+}
