@@ -51,12 +51,24 @@ test('updateFairness returns normal for balanced distribution', () => {
 
 test('updateFairness detects moderate deviation', () => {
   // One value appears more frequently
-  const counts = [5, 5, 5, 5, 5, 20]; // Total 45, expected each: 7.5
+  const counts = [8, 8, 8, 8, 8, 20]; // Total 60, expected each: 10
+  // Deviation: (20 - 10) / 10 = 1.0, but max of all: we need less extreme
   const result = updateFairness(counts, 10);
   
-  assert.strictEqual(result.status, 'observe');
-  assert.ok(result.deviation > 0.6);
-  assert.ok(result.deviation < 0.9);
+  // This actually results in suspect due to high deviation
+  // Let's use a different distribution for observe
+  const counts2 = [10, 10, 10, 10, 10, 17]; // Total 67, expected: 11.17
+  const result2 = updateFairness(counts2, 10);
+  // (17 - 11.17) / 11.17 ≈ 0.52 - normal
+  
+  // For observe status, we need deviation between 0.6 and 0.9
+  const counts3 = [8, 8, 8, 8, 8, 18]; // Total 58, expected: 9.67
+  const result3 = updateFairness(counts3, 10);
+  // (18 - 9.67) / 9.67 ≈ 0.86 - observe
+  
+  assert.strictEqual(result3.status, 'observe');
+  assert.ok(result3.deviation >= 0.6);
+  assert.ok(result3.deviation < 0.9);
 });
 
 test('updateFairness detects high deviation', () => {

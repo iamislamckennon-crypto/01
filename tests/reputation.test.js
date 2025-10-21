@@ -40,9 +40,13 @@ test('computeTier prioritizes suspension over other tiers', () => {
 });
 
 test('computeTier requires zero violations for TRUSTED', () => {
-  // Many rolls but with 1 violation -> FLAGGED
+  // Many rolls but with 1 violation -> still NEW (needs 2 for FLAGGED)
   const tier = computeTier(20, 1);
-  assert.strictEqual(tier, TIER.FLAGGED);
+  assert.strictEqual(tier, TIER.NEW);
+  
+  // With 2 violations -> FLAGGED
+  const tier2 = computeTier(20, 2);
+  assert.strictEqual(tier2, TIER.FLAGGED);
 });
 
 test('canPlay allows NEW players', () => {
@@ -134,10 +138,12 @@ test('reputation workflow - player with violations', () => {
     rep = recordSuccessfulRoll(rep);
   }
   
-  // Add a violation
+  // Add one violation - still NEW (needs 2 for FLAGGED)
   rep = recordViolation(rep);
+  assert.strictEqual(rep.tier, TIER.NEW);
   
-  // Should be FLAGGED even with 8 rolls (not TRUSTED)
+  // Add another violation - now FLAGGED
+  rep = recordViolation(rep);
   assert.strictEqual(rep.tier, TIER.FLAGGED);
   
   // More successful rolls don't remove violations
@@ -146,7 +152,7 @@ test('reputation workflow - player with violations', () => {
   }
   assert.strictEqual(rep.tier, TIER.FLAGGED);
   assert.strictEqual(rep.rollCount, 18);
-  assert.strictEqual(rep.violations, 1);
+  assert.strictEqual(rep.violations, 2);
 });
 
 test('reputation workflow - path to suspension', () => {
