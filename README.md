@@ -20,6 +20,33 @@ The architecture of the platform consists of:
 - Backend: Node.js with Express for handling game logic and user sessions.
 - Database: MongoDB for storing user data and game records.
 
+## Research
+The platform development is guided by comprehensive research into fairness, anti-cheat mechanisms, cryptographic randomness, and trust systems. Our research framework ensures evidence-based decision making and transparency.
+
+### Research Documentation
+- **[Research Plan](RESEARCH_PLAN.md)** - Detailed research objectives, methodology, evaluation criteria, and deliverables across 8 key dimensions:
+  - Existing Platforms & Benchmarks
+  - Randomness & Fairness (VRF, commit-reveal, randomness beacons)
+  - Anti-Cheat & Verification (computer vision, video authentication)
+  - Reputation & Trust Models (ELO, Glicko, Bayesian trust)
+  - Audit & Transparency (Merkle trees, blockchain anchoring)
+  - Community Sentiment & Adoption
+  - Risk & Ethical Considerations
+  - Competitive & Differentiation Analysis
+
+- **[Research Sources](RESEARCH_SOURCES.md)** - Living catalog of curated references including academic papers, open-source projects, standards, and community discussions
+
+- **[Decision Log](docs/DECISION_LOG.md)** - Architectural decision records documenting context, alternatives, rationale, and follow-up actions
+
+### Research Automation
+The `scripts/research/collect_sources.js` script provides scaffolding for future automated research source collection, classification, and scoring:
+
+```bash
+node scripts/research/collect_sources.js
+```
+
+This script outlines planned tasks for source discovery across all research dimensions and provides integration points for future automation.
+
 ## Setup Instructions
 1. Clone the repository: `git clone https://github.com/iamislamckennon-crypto/01.git`
 2. Navigate to the project directory: `cd 01`
