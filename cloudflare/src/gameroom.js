@@ -300,6 +300,10 @@ export class GameRoomDurable {
       }
       
       // Perform crypto-secure roll
+      // TODO: VRF integration point - Replace with on-chain VRF for enhanced trustless randomness
+      // const vrf = await fetchVRFProof(roomId, turnNumber);
+      // const rollResult = vrf.value;
+      // Store vrf.proof for verification
       const rollResult = rollDice();
       
       // Update distribution
@@ -410,6 +414,12 @@ export class GameRoomDurable {
       const eventHash = await this.addToHashChain(gameState, event);
       event.eventHash = eventHash;
       gameState.rollEvents.push(event);
+      
+      // TODO: Automated Merkle anchor
+      // Compute Merkle root of hash chain and anchor to blockchain
+      // const merkleRoot = computeMerkleRoot(gameState.rollEvents);
+      // await blockchainService.anchor(merkleRoot, gameState.id);
+      // Store txHash for verification
       
       await this.state.storage.put('gameState', gameState);
       
@@ -523,6 +533,11 @@ export class GameRoomDurable {
   }
 
   logMetric(eventType, data) {
+    // TODO: Analytics export - Push to R2 or external aggregator
+    // await env.ANALYTICS_BUCKET.put(
+    //   `metrics/${date}/${roomId}.json`,
+    //   JSON.stringify(metricsBuffer)
+    // );
     console.log(JSON.stringify({
       prefix: '[METRIC]',
       eventType,
