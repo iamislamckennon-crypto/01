@@ -8,6 +8,7 @@ yarn-error.log*
 dist/
 build/
 *.log
+.wrangler/
 
 # Environment
 .env
@@ -28,3 +29,7 @@ Thumbs.db
 # Testing
 coverage/
 .nyc_output/
+
+# Temporary files
+/tmp/
+*.tmp
