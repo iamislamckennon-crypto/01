@@ -1,0 +1,40 @@
+# Wrangler Configuration for Dice Roll Gaming Platform
+# Cloudflare Workers configuration with Durable Objects
+
+name = "dice-roll-platform"
+main = "src/durable-objects/GameRoomDO.js"
+compatibility_date = "2023-10-01"
+
+# Environment variables for detection configuration
+[vars]
+MIN_STABILIZATION_MS = 600
+MAX_RESIDUAL_MOTION = 0.2
+PIXEL_DIFF_THRESHOLD = 0.35
+MERKLE_BATCH_SIZE = 50
+MAX_POST_ROLL_CAPTURES = 1
+
+# Durable Objects configuration
+[[durable_objects.bindings]]
+name = "GAME_ROOM"
+class_name = "GameRoomDO"
+script_name = "dice-roll-platform"
+
+# Development configuration
+[env.dev]
+name = "dice-roll-platform-dev"
+
+[env.dev.vars]
+MIN_STABILIZATION_MS = 400
+MAX_RESIDUAL_MOTION = 0.3
+PIXEL_DIFF_THRESHOLD = 0.4
+MERKLE_BATCH_SIZE = 25
+
+# Production configuration
+[env.production]
+name = "dice-roll-platform-prod"
+
+[env.production.vars]
+MIN_STABILIZATION_MS = 800
+MAX_RESIDUAL_MOTION = 0.15
+PIXEL_DIFF_THRESHOLD = 0.3
+MERKLE_BATCH_SIZE = 100
