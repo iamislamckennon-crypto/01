@@ -13,6 +13,43 @@ This project is a competitive dice roll gaming platform prototype that allows us
 - Secure random number generation for dice rolls
 - Player authentication and session management
 - Monitoring and logging of all game actions to detect anomalies
+- **Independent dice roll detection** - platform-determined dice values from video evidence
+
+## Independent Dice Detection
+
+The platform implements an automated dice detection system that removes reliance on player-declared values:
+
+- **Multi-Frame Consensus**: Captures 3 stabilized frames and builds consensus
+- **Deterministic Processing**: Same input always produces same output
+- **Tamper Detection**: Monitors camera movement, timing violations, and frame manipulation
+- **Auditable Evidence**: All detections hashed and chained for verification
+- **Opponent Confirmation**: Uncertain detections require opponent review
+
+### How It Works
+
+1. **Pre-Roll**: Capture baseline frame before roll
+2. **Roll**: Player rolls physical dice
+3. **Stabilization**: Wait 600ms+ for camera to stabilize
+4. **Capture**: Take 3 frames at 200ms intervals
+5. **Detection**: Client-side deterministic pip detection
+6. **Consensus**: Build agreement across frames
+7. **Submit**: Package evidence and send to server
+8. **Verify**: Server validates timing, structure, and hashes
+9. **Confirm**: Opponent confirms or disputes detection
+
+### Detection Status
+
+- **Verified**: All checks passed, high confidence
+- **Uncertain**: Requires opponent confirmation
+- **Flagged**: Detection failed or disputed
+
+### Disclaimers
+
+⚠️ **Current Implementation**: Uses placeholder threshold algorithm (not production-ready)
+⚠️ **Limitations**: Lighting sensitive, limited to 1-2 dice, no deepfake detection
+⚠️ **Future**: Will integrate WASM-based OpenCV for production use
+
+See [INDEPENDENT_DETECTION.md](docs/INDEPENDENT_DETECTION.md) for complete documentation.
 
 ## Architecture
 The architecture of the platform consists of:
